@@ -1,0 +1,4 @@
+Questo è il primo file di prova per la parte C
+non fa niente de specifico e serve solo
+per capire se il mio codice funziona...
+perfettamente

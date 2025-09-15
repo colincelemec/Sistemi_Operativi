@@ -1,0 +1,4 @@
+SONO LA PRIMA LINEA di f2.txt e sono LUNGO 4 LINEE
+SONO LA LINEA nro 2 di f2.txt
+Ancora una linea 
+Ed ecco LA LINEA nro 4 di questo file f2.txt !

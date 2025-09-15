@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <ctype.h> 	/* per usare isdigit() e isalpha() */
+
+int main(int argc, char **argv){
+    int p[2][2]; /*p è un array di due pipe */
+    int N; /*N è il numero di file e quindi di processi da creare*/
+    int pid; /*pid variabile usata per il valore di ritorno della fork*/
+    int fdr; /*fdr file descriptor usato da ogni figlio per aprire in lettura il proprio file*/
+    int n; /*indice processi*/
+    int tot=0; /*tot variabile usata dal padre per contare i caratteri scritti su stdout*/
+    int nr0,nr1; /*nr0 numero di caratteri letti dalla pipe 'pari'ce nr1 numero di caratteri letti dalla pipe 'dispari'*/
+    char ch,ch0,ch1; /*ch è il carattere usato da ogni figlio per leggere i singoli caratteri da ogni file; ch0 è il carattere letto dal padre sulla pipe 'pari' e ch11 è il carattere letto dal padre su quella 'dispari'*/
+    int pidFiglio, status, ritorno; /*variabili per wait*/
+
+
+    /*controllo sul numero di parametri*/
+    if(argc < 3)
+    {
+        printf("Errore: Necessari almeno 2 parametri (nom di file) per %s e invece argc=%d\n", argv[0],argc);
+        exit(1);
+    }
+
+    N=argc-1; /*calcoliamo il numero dei file passati, e di conseguenza , il numero di processi figli da creare*/
+
+    /*creazione delle due pipe: quella pari e quella dispari*/
+    if(pipe(p[0]) < 0) /*pipe per caratteri numerici che sarà usata in scrittura dai figli (dispari) che leggono dai file pari*/
+    {
+        printf("errore nella creazione della prima pipe\n");
+        exit(2);
+    }
+
+    if(pipe(p[1]) < 0) /*pipe per i caratteri alfabetici che sarà usata in scrittura dai figli (pari) che leggono dai file dispari*/
+    {
+        printf("Errore nella creazione della seconda pipe\n");
+        exit(3);
+    }
+
+    printf("DEBUG-Sono il processo padre con pid %d e sto per generare %d figli\n", getpid(), N);
+
+    for(n=0; n<N; n++)
+    {
+
+        /*si creano N figli*/
+        if((pid = fork()) < 0)
+        {
+            printf("errore nella fork\n"),
+            exit(4);
+        }
+
+        if(pid == 0) /*ogni figlio*/
+        {
+            /*chiusura lati pipe non utilizzati*/
+            close(p[0][0]); /*chiude i lati di lettura di entrambe le pipe*/
+            close(p[1][0]);
+            close(p[n%2][1]); /*chiude il lato di scrittura della pipe non usata: quindi se i è pari si chiude il lato di scrittura di p[0], altrimenti se i è dispari si chiude quello di p[1]*/
+            /*apertura del file associato*/
+
+            if((fdr = open(argv[n+1], O_RDONLY)) < 0)
+            {
+                printf("Errore nell'apertura del file %s\n", argv[n+1]);
+                exit(-1);
+            }
+
+            while(read(fdr,&ch,1) > 0){ /*ogni figlio legge via via tutti i caratteri dal proprio file associato*/
+                if((((n%2) == 0) && isalpha(ch)) || (((n%2) == 1) && isdigit(ch)))
+                    write(p[(n+1) % 2][1], &ch, 1); /*comunica il carattere al padre , scrivendo sulla pipe 0 i numerici e sulla pipe 1 gli alfabetici*/
+            }
+            exit(ch); /*tornare l'ultimo carattere letto dal figlio*/
+        }
+    }
+
+    /*padre*/
+    /*chiude i lati di scrittura di entrambe le pipe*/
+    close(p[0][1]);
+    close(p[1][1]);
+
+    printf("i caratteri che sono stati inviati dai figli sono:\n");
+      	/* il testo specifica che si deve continuare a leggere dalle due pipe anche se non si riesce a garantire l'alternanza in output a causa del termine dei processi pari o dei processi dispari; appena pero' finiscono entrambi i 'tipi' di processi il padre deve smettere di leggere dalle pipe */
+    nr0=read(p[0][0], &ch0, 1);
+    nr1=read(p[1][0], &ch1, 1);
+    while((nr0 != 0) || (nr1 != 0))
+    {
+        tot = tot + nr0 + nr1;
+        write(1,&ch1,nr1);
+        write(1,&ch0,nr0);
+        nr0=read(p[0][0], &ch0, 1);
+        nr1=read(p[1][0], &ch1, 1);
+    }
+
+    printf("\nNumero di caratteri scritti sullo stdout : %d\n", tot);
+
+    /* Attesa della terminazione dei figli */
+  	for(n=0; n < N; n++)
+  	{
+    		if ((pidFiglio = wait(&status)) < 0)
+    		{
+      			printf("Errore wait\n");
+      			exit(5);
+    		}
+    		if ((status & 0xFF) != 0)
+                	printf("Figlio con pid %d terminato in modo anomalo\n", pidFiglio);
+    		else
+    		{
+      			ritorno=(int)((status >> 8) & 0xFF);
+      			printf("Il figlio con pid=%d ha ritornato %c (in decimale %d, se 255 problemi!)\n", pidFiglio, ritorno, ritorno); /* il padre stampa il valore ritornato come carattere; aggiunta la stampa come intero solo per intercettare un eventuale errore nel figlio */
+    		}
+  	}  
+
+  	exit(0);
+
+}

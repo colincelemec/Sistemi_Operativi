@@ -1,0 +1,2 @@
+SONO LA LINEA numero 1 di f1.txt , ci sono 2 LINEE.
+SONO LA SECONDA LINEA con ancora altri caratteri

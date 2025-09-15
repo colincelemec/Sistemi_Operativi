@@ -1,0 +1,45 @@
+FILE DI REFERRENZA PER FARE GLI ESERCIZI E PREPARE L'ESAME 
+DELLA PARTE SHELL
+
+a) 15 FEBBRAIO 2017
+- La parte shell prevede 2 parametri: il primo deve essere il 
+nome assoluto di una directory e il secondo un intero X strettamente positivo
+- Specifica: deve cercare nella gerarchia G specificata tutte le directory che
+contengono almeno un file leggibile con lunghezza in linee pari X e il cui contenuto
+del file sia tale per cui tutte le sue linee contengono almeno un carattere numerico.
+Si riporti il nome assoluto di tali directory sullo standard output e quindi i nomi di 
+tutti i file trovati. Quindi in ogni directory trovata, chiesta conferma all'utente, 
+si deve invocare la parte in C, passando come parametri i nomi dei file trovati e la loro
+lunghezza in linee X
+
+b) 9 FEBBRAIO 2015
+- La parte shell prevede due parametri: il primo deve essere il nome assoluto di
+una directory e il secondo deve essere considerato un numero intero strettamente positivo
+- Specifica: deve cercare nella gerarchia G tutte le directory che contengono almeno un file
+leggibile con lunghezza in linee pari a K: si riporti il nome assoluto di tali directory sullo
+stdout
+- Al termine dell'intera esplorazione ricorsiva di G : Per ogni file trovato Fi si deve richiedere all'utente 
+un numero Xi intero strettamente positivo e minore o uguale a K: quindi si deve invocare la parte 
+in C passando come parametri i nomi assoluti dei file trovati intervallati dal numero corrispondente
+chiesto all'utente
+
+c) 17 APRILE 2015 
+- La parte shell prevede N+1 parametri (con N >= 2): il primo parametro deve essere 
+un numero intero X strettamente positivo, mentre gli altri N devono essere nomi assoluti
+di directory che identificano N gerarchie. è organizzato in N fasi , una per ogni gerarchia
+- Specifica: per ognuna delle N fasi, deve esplorare la gerarchia Gi, deve contare globalmente tutti
+i file leggibili che soddisfano la seguente specifica: il contenuto del file deve essere tale per cui
+almeno X linee terminino con il carettere 't'.
+- Al termine di tutte le N fasi: si deve riportare sullo stdout il numero totale di file trovati globalmente
+che soddisfano la specifica precedente; quindi si deve riportare sullo stdout il nome assoluto di ogni file 
+trovato chiedendo contestualmente all'utente un numero K strettamente positivo e strettamente minore di X: tale 
+numero deve essere usato per riportare sullo stdout la linea K-esima del file trovato corrente 
+
+d) 14 LUGLIO 2021
+- La parte shell prevede Q+2 parametri (con Q >= 2): I primi Q devono essere nomi assoluti di directory che identificano Q gerarchie
+mentre gli ultimi due parametri devono essere considerati numeri interi strettamene positivi(H e M). 
+- Specifica: per ognuna delle Q fase , deve esplorare la gerarchia G e deve cercare tutte le directory
+che contengono in numero esattamente minore di H ma maggiore o uguale a 2 di file il cui nome sia costituito da esattamente 2 
+caratteri e con lunghezza in linee esattamente uguale a M. Si riporti il nome assoluto di tali directory sullo standard output.
+In ogni directory trovate, si deve invocare la parte in C, passando come parametri i nomi dei file trovati che soddisfano la
+condizione precedente e il numero M.
