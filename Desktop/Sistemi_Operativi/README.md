@@ -97,7 +97,7 @@ Questo repository è stato creato a scopo didattico per lo studio e la pratica d
 
 ## Autore
 
-Colin Cetcheussi Eumendji
+Colince Tcheussieu Mendji
 
 ## Licenza
 
